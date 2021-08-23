@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   resources :users
-  post '/items/bulk_insert', to: 'items#bulk_insert'
   resources :items
+  post '/items/bulk_upsert', to: 'items#bulk_upsert'
+  resources :materials
+  post '/materials/create_materials', to: 'materials#create_materials'
+  post '/materials/ship_order', to: 'items#allocate_materials'
+
 end

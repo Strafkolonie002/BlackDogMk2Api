@@ -17,26 +17,6 @@ class ItemsController < ApplicationController
     end
   end
 
-  def bulk_insert
-    errors = Item.validate_create(params)
-
-    if errors.blank?
-      data = params[:data]
-
-      data.each do |single|
-        # create item_properties as {}, when it is null
-        single[:item_properties] = {} if single[:item_properties].blank?
-        single[:created_at] = Time.now
-        single[:updated_at] = Time.now
-      end
-
-      items = Item.insert_all(data, unique_by: :item_code, returning: %i[id item_code])
-      render json: { message: "success", data: items }, status: :ok
-    else
-      render json: { message: "failure", errors: errors }, status: :bad_request
-    end
-  end
-
   def show
     @item = set_item
     render json: { message: 'success', data: [@item] }
@@ -54,6 +34,24 @@ class ItemsController < ApplicationController
   def destroy
     @item = set_item
     render json: { message: 'success', data: [@item] }
+  end
+
+  def bulk_upsert
+    errors = Item.validate_bulk_upsert(params)
+
+    if errors.blank?
+      data = Item.add_time_and_properties(params[:data])
+      items = Item.upsert_all(data, unique_by: :item_code, returning: %i[id item_code item_name item_properties])
+
+      # Avoid to return item_properties as "{\"key\": \"value\"}" 
+      items.each do |single|
+        single["item_properties"] = JSON.parse(single["item_properties"])
+      end
+      
+      render json: { message: "success", data: items }, status: :ok
+    else
+      render json: { message: "failure", errors: errors }, status: :bad_request
+    end
   end
 
   private
