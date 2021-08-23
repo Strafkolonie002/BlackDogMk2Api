@@ -7,6 +7,34 @@ class MaterialsController < ApplicationController
     }
   end
 
+  def create
+    material = Material.new(material_params)
+    if material.save
+      render json: { message: 'success', data: [material] }
+    else
+      render json: { message: 'failure', errors: material.errors }
+    end
+  end
+
+  def show
+    @material = set_material
+    render json: { message: 'success', data: [@material] }
+  end
+
+  def update
+    @material = set_material
+    if @material.update(material_params)
+      render json: { message: 'success', data: [@material] }
+    else
+      render json: { message: 'failure', errors: [@material.errors] }
+    end
+  end
+
+  def destroy
+    @material = set_material
+    render json: { message: 'success', data: [@material] }
+  end
+
   def create_materials
     errors = Material.validate_receipt_order(params)
 
