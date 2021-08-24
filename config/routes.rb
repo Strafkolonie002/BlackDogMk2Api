@@ -5,6 +5,6 @@ Rails.application.routes.draw do
   post '/items/bulk_upsert', to: 'items#bulk_upsert'
   resources :materials
   post '/materials/create_materials', to: 'materials#create_materials'
-  post '/materials/ship_order', to: 'items#allocate_materials'
+  post '/materials/update_materials', to: 'materials#update_materials'
 
 end

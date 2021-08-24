@@ -30,6 +30,9 @@ gem 'database_cleaner-active_record'
 gem 'factory_bot_rails'
 gem 'rspec-rails'
 
+# parallel
+gem 'parallel'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
