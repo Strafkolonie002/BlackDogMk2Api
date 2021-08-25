@@ -49,11 +49,12 @@ class Material < ApplicationRecord
     if params[:material_state_code].blank?
       errors.push({ error_info: ["material_state_code is required"] })
       return errors
+    elsif !params[:material_state_code].is_a?(String)
+      errors.push({ error_info: ["material_state_code should be String"] })
+      return errors
     else
-      unless params[:material_state_code].is_a?(String)
-        errors.push({ error_info: ["material_state_code should be String"] })
-        return errors
-      end
+      @material_state = MaterialState.find_by(material_state_code: params[:material_state_code])
+      errors.push({ error_info: ["MaterialState not found"] }) if @material_state.nil?
     end
 
     # validate data
@@ -76,18 +77,19 @@ class Material < ApplicationRecord
 
       if single[:item_code].blank?
         error_info.push("item_code is required")
+      elsif !single[:item_code].is_a?(String)
+        error_info.push("item_code should be String")
       else
-        unless single[:item_code].is_a?(String)
-          error_info.push("item_code should be String")
-        end
+        @item = Item.find_by(item_code: single[:item_code])
+        error_info.push("Item not found") if @item.nil?
       end
 
       if single[:quantity].blank?
         error_info.push("quantity is required")
+      elsif !single[:quantity].is_a?(Integer)
+        error_info.push("quantity should be Integer")
       else
-        unless single[:quantity].is_a?(Integer)
-          error_info.push("quantity should be Integer")
-        end
+        error_info.push("set quantity greater than 0") if 0 >= single[:quantity] 
       end
 
       unless single[:material_properties].nil?
@@ -114,24 +116,26 @@ class Material < ApplicationRecord
     errors = []
 
     # validate material_state_code
-    if params[:from_material_state_code].blank?
-      errors.push({ error_info: ["from_material_state_code is required"] })
+    if params[:material_state_code].blank?
+      errors.push({ error_info: ["material_state_code is required"] })
+      return errors
+    elsif !params[:material_state_code].is_a?(String)
+      errors.push({ error_info: ["material_state_code should be String"] })
       return errors
     else
-      unless params[:from_material_state_code].is_a?(String)
-        errors.push({ error_info: ["from_material_state_code should be String"] })
-        return errors
-      end
+      @material_state = MaterialState.find_by(material_state_code: params[:material_state_code])
+      errors.push({ error_info: ["MaterialState not found by material_state_code"] }) if @material_state.nil?
     end
 
-    if params[:to_material_state_code].blank?
-      errors.push({ error_info: ["to_material_state_code is required"] })
+    if params[:dest_material_state_code].blank?
+      errors.push({ error_info: ["dest_material_state_code is required"] })
+      return errors
+    elsif !params[:dest_material_state_code].is_a?(String)
+      errors.push({ error_info: ["dest_material_state_code should be String"] })
       return errors
     else
-      unless params[:to_material_state_code].is_a?(String)
-        errors.push({ error_info: ["to_material_state_code should be String"] })
-        return errors
-      end
+      @material_state = MaterialState.find_by(material_state_code: params[:dest_material_state_code])
+      errors.push({ error_info: ["MaterialState not found by dest_material_state_code"] }) if @material_state.nil?
     end
 
     # validate data
@@ -154,18 +158,19 @@ class Material < ApplicationRecord
 
       if single[:item_code].blank?
         error_info.push("item_code is required")
+      elsif !single[:item_code].is_a?(String)
+        error_info.push("item_code should be String")
       else
-        unless single[:item_code].is_a?(String)
-          error_info.push("item_code should be String")
-        end
+        @item = Item.find_by(item_code: single[:item_code])
+        error_info.push("Item not found") if @item.nil?
       end
 
       if single[:quantity].blank?
         error_info.push("quantity is required")
+      elsif !single[:quantity].is_a?(Integer)
+        error_info.push("quantity should be Integer")
       else
-        unless single[:quantity].is_a?(Integer)
-          error_info.push("quantity should be Integer")
-        end
+        error_info.push("set quantity greater than 0") if 0 >= single[:quantity] 
       end
 
       unless error_info.blank?
