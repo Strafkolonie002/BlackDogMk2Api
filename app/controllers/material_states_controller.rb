@@ -1,4 +1,4 @@
-class material_stateStatesController < ApplicationController
+class MaterialStatesController < ApplicationController
 
   def index
     material_states = MaterialState.order(created_at: :desc)
@@ -11,29 +11,27 @@ class material_stateStatesController < ApplicationController
   def create
     material_state = MaterialState.new(material_state_params)
     if material_state.save
-      render json: { message: 'success', data: [material_state] }
+      render json: { message: 'success', data: [material_state] }, status: :ok
     else
-      render json: { message: 'failure', errors: material_state.errors }
+      render json: { message: 'failure', errors: material_state.errors }, status: :bad_request
     end
   end
 
   def show
-    @material_state = set_material_state
-    render json: { message: 'success', data: [@material_state] }
+    render json: { message: 'success', data: [set_material_state] }, status: :ok
   end
 
   def update
-    @material_state = set_material_state
-    if @material_state.update(material_state_params)
-      render json: { message: 'success', data: [@material_state] }
+    if set_material_state.update(material_state_params)
+      render json: { message: 'success', data: [@material_state] }, status: :ok
     else
-      render json: { message: 'failure', errors: [@material_state.errors] }
+      render json: { message: 'failure', errors: [@material_state.errors] }, status: :bad_request
     end
   end
 
   def destroy
-    @material_state = set_material_state
-    render json: { message: 'success', data: [@material_state] }
+    set_material_state.destroy
+    render json: { message: 'success', data: [@material_state] }, status: :ok
   end
 
   private
@@ -44,4 +42,5 @@ class material_stateStatesController < ApplicationController
   def material_state_params
     params.require(:material_state).permit(:material_state_code, :material_state_name)
   end
+  
 end

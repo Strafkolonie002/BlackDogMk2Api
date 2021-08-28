@@ -4,7 +4,7 @@ class Item < ApplicationRecord
   validates :item_name, presence: true, length: { maximum: 20 }
   validates :item_properties, presence: true
 
-  def self.validate_bulk_upsert(params)
+  def self.validate_bulk_upsert_request(params)
     errors = []
 
     # data validate

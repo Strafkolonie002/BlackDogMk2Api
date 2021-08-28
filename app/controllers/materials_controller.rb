@@ -17,13 +17,11 @@ class MaterialsController < ApplicationController
   end
 
   def show
-    @material = set_material
-    render json: { message: 'success', data: [@material] }
+    render json: { message: 'success', data: [set_material] }
   end
 
   def update
-    @material = set_material
-    if @material.update(material_params)
+    if set_material.update(material_params)
       render json: { message: 'success', data: [@material] }
     else
       render json: { message: 'failure', errors: [@material.errors] }
@@ -31,23 +29,23 @@ class MaterialsController < ApplicationController
   end
 
   def destroy
-    @material = set_material
+    set_material.destroy
     render json: { message: 'success', data: [@material] }
   end
 
   # for receipt_order
   def create_materials
-    errors = Material.validate_create_materials(params)
+    errors = Material.validate_create_materials_request(params)
 
     if errors.blank?
-      result = Material.bulk_insert(params)
+      created_materials = Material.bulk_insert(params)
 
       # Avoid to return material_properties as "{\"key\": \"value\"}" 
-      result.each do |single|
+      created_materials.each do |single|
         single["material_properties"] = JSON.parse(single["material_properties"])
       end
       
-      render json: { message: "success", data: result }, status: :ok
+      render json: { message: "success", data: created_materials }, status: :ok
     else
       render json: { message: "failure", errors: errors }, status: :bad_request
     end
@@ -57,12 +55,8 @@ class MaterialsController < ApplicationController
   def update_materials
     errors = Material.validate_update_materials(params)
     if errors.blank?
-      params[:data].each do |single|
-        unless Material.allocate?(single[:item_code], params[:from_material_state_code], single[:quantity])
-          return render json: { message: "failure", errors: [{error_info: ["Material shortage!!"], order: single}] }, status: 500
-        end
-      end
-      render json: { message: "success", errors: errors }, status: :ok
+      updated_materials = Material.bulk_update_material_state(params)
+      render json: { message: "success", data: updated_materials }, status: :ok
     else
       render json: { message: "failure", errors: errors }, status: :bad_request
     end
@@ -74,7 +68,7 @@ class MaterialsController < ApplicationController
   end
 
   def material_params
-    params.require(:material).permit(:item_code, :material_state_code, material_properties: {})
+    params.require(:material).permit(:item_code, :material_state_code, :container_code, material_properties: {})
   end
 
 end

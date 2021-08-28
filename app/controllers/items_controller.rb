@@ -1,49 +1,43 @@
 class ItemsController < ApplicationController
 
   def index
-    items = Item.order(created_at: :desc)
-    render json: {
-      message: "success",
-      data: items
-    }
+    render json: { message: "success", data: Item.order(created_at: :desc) }, status: :ok
   end
 
   def create
     item = Item.new(item_params)
     if item.save
-      render json: { message: 'success', data: [item] }
+      render json: { message: 'success', data: [item] }, status: :bad_request
     else
-      render json: { message: 'failure', errors: item.errors }
+      render json: { message: 'failure', errors: item.errors }, status: :bad_request
     end
   end
 
   def show
-    @item = set_item
-    render json: { message: 'success', data: [@item] }
+    render json: { message: 'success', data: [set_item] }, status: :ok
   end
 
   def update
-    @item = set_item
-    if @item.update(item_params)
-      render json: { message: 'success', data: [@item] }
+    if set_item.update(item_params)
+      render json: { message: 'success', data: [@item] }, status: :ok
     else
-      render json: { message: 'failure', errors: [@item.errors] }
+      render json: { message: 'failure', errors: [@item.errors] }, status: :bad_request
     end
   end
 
   def destroy
-    @item = set_item
-    render json: { message: 'success', data: [@item] }
+    set_item.destroy
+    render json: { message: 'success', data: [@item] }, status: :ok
   end
 
   def bulk_upsert
-    errors = Item.validate_bulk_upsert(params)
+    errors = Item.validate_bulk_upsert_request(params)
 
     if errors.blank?
-      data = Item.add_time_and_properties(params[:data])
-      items = Item.upsert_all(data, unique_by: :item_code, returning: %i[id item_code item_name item_properties])
+      # upsert_all needs current_tine and update_time 
+      items = Item.upsert_all(Item.add_time_and_properties(params[:data]), unique_by: :item_code, returning: %i[id item_code item_name item_properties])
 
-      # Avoid to return item_properties as "{\"key\": \"value\"}" 
+      # Avoid to return item_properties as "{\"key\": \"value\"}"
       items.each do |single|
         single["item_properties"] = JSON.parse(single["item_properties"])
       end

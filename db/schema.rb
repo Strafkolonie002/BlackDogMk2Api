@@ -29,11 +29,13 @@ ActiveRecord::Schema.define(version: 2021_08_25_145852) do
     t.string "material_state_name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["material_state_code"], name: "index_material_states_on_material_state_code", unique: true
   end
 
   create_table "materials", force: :cascade do |t|
     t.string "item_code", null: false
     t.string "material_state_code", null: false
+    t.string "container_code"
     t.jsonb "material_properties", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

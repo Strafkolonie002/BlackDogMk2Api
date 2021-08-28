@@ -25,15 +25,32 @@ class Material < ApplicationRecord
         material_data.push(material_params)
       }
     end
-
     Material.insert_all(material_data, returning: %i[id item_code material_state_code material_properties])
   end
 
-  def self.bulk_update_material_state
-    result = []
+  def self.bulk_update_material_state(params)
+    target_materials = []
+
+    params[:data].each do |single|
+      material_properties = single[:material_properties]
+
+      if material_properties.blank?
+        material_properties = {}
+      end
+
+      materials = Material.where(
+        item_code: single[:item_code], 
+        material_state_code: params[:material_state_code]
+      ).order(:id).limit(single[:quantity])
+      materials.update_all(material_state_code: params[:dest_material_state_code], updated_at: Time.now)
+
+      target_materials = target_materials + materials
+    end
+
+    return target_materials
   end
 
-  def self.allocate?(item_code, material_state_code, quantity)
+  def self.allocatable?(item_code, material_state_code, quantity)
     count = Material.where(item_code: item_code, material_state_code: material_state_code).count
     if count >= quantity
       return true
@@ -42,7 +59,7 @@ class Material < ApplicationRecord
     end
   end
 
-  def self.validate_create_materials(params)
+  def self.validate_create_materials_request(params)
     errors = []
 
     # validate material_state_code
@@ -91,7 +108,7 @@ class Material < ApplicationRecord
       else
         error_info.push("set quantity greater than 0") if 0 >= single[:quantity] 
       end
-
+      
       unless single[:material_properties].nil?
         # to validate the type, casts ActionController::Parameter to Hash
         begin 
@@ -171,6 +188,10 @@ class Material < ApplicationRecord
         error_info.push("quantity should be Integer")
       else
         error_info.push("set quantity greater than 0") if 0 >= single[:quantity] 
+      end
+
+      unless Material.allocatable?(single[:item_code], params[:material_state_code], single[:quantity])
+        error_info.push("Material Shortage!")
       end
 
       unless error_info.blank?
