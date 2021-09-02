@@ -42,7 +42,7 @@ class Item < ApplicationRecord
       end
 
       unless single[:item_properties].blank?
-        # to validate the type, casts ActionController::Parameter to Hash
+        # to validate the type, cast ActionController::Parameter to Hash
         begin 
           item_properties = single[:item_properties].permit!.to_hash
         rescue => error

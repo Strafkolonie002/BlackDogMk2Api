@@ -1,10 +1,7 @@
 class MaterialsController < ApplicationController
   def index
     materials = Material.order(created_at: :desc)
-    render json: {
-      message: "success",
-      data: materials
-    }
+    render json: { message: "success", data: materials }
   end
 
   def create
@@ -55,8 +52,8 @@ class MaterialsController < ApplicationController
   def update_materials
     errors = Material.validate_update_materials(params)
     if errors.blank?
-      updated_materials = Material.bulk_update_material_state(params)
-      render json: { message: "success", data: updated_materials }, status: :ok
+      target_materials = Material.bulk_update_material_state(params)
+      render json: { message: "success", data: target_materials }, status: :ok
     else
       render json: { message: "failure", errors: errors }, status: :bad_request
     end

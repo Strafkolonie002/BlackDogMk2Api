@@ -3,7 +3,7 @@ class CreateItems < ActiveRecord::Migration[6.0]
     create_table :items do |t|
       t.string :item_code, null: false
       t.string :item_name, null: false
-      t.jsonb :item_properties, null: false
+      t.jsonb :item_properties, null: false, default: {}
 
       t.timestamps
     end

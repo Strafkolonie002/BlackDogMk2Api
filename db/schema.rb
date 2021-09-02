@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_25_145852) do
+ActiveRecord::Schema.define(version: 2021_08_29_064115) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2021_08_25_145852) do
   create_table "items", force: :cascade do |t|
     t.string "item_code", null: false
     t.string "item_name", null: false
-    t.jsonb "item_properties", null: false
+    t.jsonb "item_properties", default: {}, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["item_code"], name: "index_items_on_item_code", unique: true
@@ -36,9 +36,29 @@ ActiveRecord::Schema.define(version: 2021_08_25_145852) do
     t.string "item_code", null: false
     t.string "material_state_code", null: false
     t.string "container_code"
-    t.jsonb "material_properties", null: false
+    t.jsonb "material_properties", default: {}, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "task_details", force: :cascade do |t|
+    t.string "task_code"
+    t.integer "task_detail_number"
+    t.string "material_property_name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.string "task_code", null: false
+    t.string "task_name", null: false
+    t.string "search_properties", default: [], null: false, array: true
+    t.string "dest_material_state_code"
+    t.string "post_action"
+    t.jsonb "task_properties", default: {}, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["task_code"], name: "index_tasks_on_task_code", unique: true
   end
 
   create_table "users", force: :cascade do |t|

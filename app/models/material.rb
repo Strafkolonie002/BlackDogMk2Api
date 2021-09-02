@@ -110,7 +110,7 @@ class Material < ApplicationRecord
       end
       
       unless single[:material_properties].nil?
-        # to validate the type, casts ActionController::Parameter to Hash
+        # to validate the type, cast ActionController::Parameter to Hash
         begin 
           material_properties = single[:material_properties].permit!.to_hash
         rescue => error
