@@ -1,5 +1,4 @@
 class Material < ApplicationRecord
-  
   validates :item_code, presence: true, length: { maximum: 20 }
   validates :material_state_code, presence: true, length: { maximum: 20 }
   validates :material_properties, presence: true
@@ -18,6 +17,7 @@ class Material < ApplicationRecord
         material_params = {
           item_code: single[:item_code],
           material_state_code: params[:material_state_code],
+          container_code: single[:container_code],
           material_properties: material_properties,
           created_at: Time.current,
           updated_at: Time.current
@@ -25,7 +25,7 @@ class Material < ApplicationRecord
         material_data.push(material_params)
       }
     end
-    Material.insert_all(material_data, returning: %i[id item_code material_state_code material_properties])
+    Material.insert_all(material_data, returning: %i[id item_code material_state_code container_code material_properties])
   end
 
   def self.bulk_update_material_state(params)
@@ -99,6 +99,14 @@ class Material < ApplicationRecord
       else
         @item = Item.find_by(item_code: single[:item_code])
         error_info.push("Item not found") if @item.nil?
+      end
+
+      # validate Container if exists
+      if !single[:container_code].blank? && !single[:container_code].is_a?(String)
+        errors.push({ error_info: ["container_code should be String"] })
+      elsif !single[:container_code].blank?
+        @container = Container.find_by(container_code: single[:container_code])
+        errors.push({ error_info: ["Container not found"] }) if @container.nil?
       end
 
       if single[:quantity].blank?

@@ -1,8 +1,19 @@
 class Item < ApplicationRecord
-
   validates :item_code, presence: true, uniqueness: true, length: { maximum: 20 }
   validates :item_name, presence: true, length: { maximum: 20 }
   validates :item_properties, presence: true
+
+  def self.bulk_upsert(params)
+    # upsert_all needs current_tine and update_time 
+    items = Item.upsert_all(Item.add_time_and_properties(params[:data]), unique_by: :item_code, returning: %i[id item_code item_name item_properties])
+
+    # Avoid to return item_properties as "{\"key\": \"value\"}"
+    items.each do |single|
+      single["item_properties"] = JSON.parse(single["item_properties"])
+    end
+
+    return items
+  end
 
   def self.validate_bulk_upsert_request(params)
     errors = []

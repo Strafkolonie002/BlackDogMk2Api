@@ -10,4 +10,6 @@ Rails.application.routes.draw do
   resources :tasks
   post 'tasks/:task_code' => 'tasks#execute'
   resources :task_details
+  resources :containers
+  resources :post_actions
 end

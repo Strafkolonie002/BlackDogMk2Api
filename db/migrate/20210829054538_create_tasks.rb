@@ -5,7 +5,7 @@ class CreateTasks < ActiveRecord::Migration[6.0]
       t.string :task_name, null: false
       t.string :search_properties, null: false, default: [], array: true
       t.string :dest_material_state_code
-      t.string :post_action
+      t.string :post_action_code
       t.jsonb :task_properties, null: false, default: {}
 
       t.timestamps

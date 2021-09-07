@@ -10,10 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_29_064115) do
+ActiveRecord::Schema.define(version: 2021_09_06_071038) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "containers", force: :cascade do |t|
+    t.string "container_code", null: false
+    t.string "container_type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["container_code"], name: "index_containers_on_container_code", unique: true
+  end
 
   create_table "items", force: :cascade do |t|
     t.string "item_code", null: false
@@ -41,6 +49,15 @@ ActiveRecord::Schema.define(version: 2021_08_29_064115) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "post_actions", force: :cascade do |t|
+    t.string "post_action_code", null: false
+    t.string "post_action_name", null: false
+    t.string "method_name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["post_action_code"], name: "index_post_actions_on_post_action_code", unique: true
+  end
+
   create_table "task_details", force: :cascade do |t|
     t.string "task_code"
     t.integer "task_detail_number"
@@ -54,7 +71,7 @@ ActiveRecord::Schema.define(version: 2021_08_29_064115) do
     t.string "task_name", null: false
     t.string "search_properties", default: [], null: false, array: true
     t.string "dest_material_state_code"
-    t.string "post_action"
+    t.string "post_action_code"
     t.jsonb "task_properties", default: {}, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

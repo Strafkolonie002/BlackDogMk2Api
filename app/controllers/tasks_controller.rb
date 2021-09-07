@@ -35,11 +35,19 @@ class TasksController < ApplicationController
     @task = Task.find_by(task_code: params[:task_code])
     unless @task.blank?
       errors = @task.validate_execute_request(params)
+
       if errors.blank?
-        render json: { message: 'success', data: @task.execute_task(params) }
+        result = @task.execute_task(params)
+        
+        if result[:materials].blank?
+          render json: { message: "failure", errors: [{ error_info: ["Material not found"] }] } 
+        else
+          render json: { message: 'success', data: result[:materials], post_action_result: result[:post_action_result] }
+        end
       else
         render json: { message: 'failure', errors: errors }
       end
+
     else
       render json: { message: 'failure', errors: [{ error_info: ["task_code:#{params[:task_code]} not found"] }] }
     end
@@ -51,7 +59,7 @@ class TasksController < ApplicationController
   end
 
   def task_params
-    params.require(:task).permit(:task_code, :task_name, :dest_material_state_code, :post_action, search_properties: [], task_properties: {})
+    params.require(:task).permit(:task_code, :task_name, :dest_material_state_code, :post_action_code, search_properties: [], task_properties: {})
   end
 
 end
