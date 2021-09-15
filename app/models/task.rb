@@ -9,6 +9,15 @@ class Task < ApplicationRecord
 
     result = {}
     
+    properties_conditions = params[:search_conditions][:material_properties]
+
+    if !properties_conditions.blank?
+      properties_conditions.each do |key, value|
+        
+      end
+      
+    end
+
     # get Materials by the values of search_conditions
     materials = Material.where(params[:search_conditions])
 
