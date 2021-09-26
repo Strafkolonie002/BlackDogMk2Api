@@ -1,6 +1,7 @@
-class ReceiveOrdersController < ApplicationController
+class ShipOrdersController < ApplicationController
+
   def index
-    render json: { message: "success", orders: Order.where(order_type: "receive").order(created_at: :desc) }, status: :ok
+    render json: { message: "success", orders: Order.where(order_type: "ship").order(created_at: :desc) }, status: :ok
   end
 
   def create
@@ -8,7 +9,7 @@ class ReceiveOrdersController < ApplicationController
     error_list = @order_collection_form.validate_params
 
     if error_list.blank?
-      result = @order_collection_form.create_receive_order
+      result = @order_collection_form.create_ship_order
 
       render json: { message: 'success', orders: result }, status: :ok
     else
@@ -44,6 +45,7 @@ class ReceiveOrdersController < ApplicationController
   end
 
   def order_collection_form_params
-    params.require(:receive_order).permit({ orders: [:slip_number, { order_details: [:item_code, :quantity] }, order_info: {}] })
+    params.require(:ship_order).permit({ orders: [:slip_number, { order_details: [:item_code, :quantity] }, order_info: {}] })
   end
+
 end

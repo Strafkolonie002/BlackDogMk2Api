@@ -6,7 +6,7 @@ class ItemsController < ApplicationController
   def create
     item = Item.new(item_params)
     if item.save
-      render json: { message: 'success', item: item }, status: :bad_request
+      render json: { message: 'success', item: item }, status: :ok
     else
       render json: { message: 'failure', errors: item.errors }, status: :bad_request
     end

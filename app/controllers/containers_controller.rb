@@ -7,7 +7,7 @@ class ContainersController < ApplicationController
   def create
     container = Container.new(container_params)
     if container.save
-      render json: { message: 'success', data: [container] }
+      render json: { message: 'success', data: container }
     else
       render json: { message: 'failure', errors: container.errors }
     end

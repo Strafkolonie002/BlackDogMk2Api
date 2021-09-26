@@ -5,4 +5,5 @@ class Order < ApplicationRecord
   validates :slip_number, presence: true, uniqueness: true
   validates :order_type, inclusion: { in: ["receive", "ship"] }
   validates :order_status, presence: true
+
 end

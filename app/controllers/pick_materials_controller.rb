@@ -1,0 +1,2 @@
+class PickMaterialsController < ApplicationController
+end

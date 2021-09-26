@@ -2,9 +2,9 @@ class ItemCollectionForm
   include Virtus.model
   include ActiveModel::Model
 
-  attribute :item, Array[Item]
+  attribute :items, Array[Item]
 
-  validates :item, presence: true
+  validates :items, presence: true
 
   def save!
     return false if invalid?

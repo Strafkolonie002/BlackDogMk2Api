@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 202100910140429) do
+ActiveRecord::Schema.define(version: 2021_09_22_315344) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "barcodes", force: :cascade do |t|
+    t.string "barcode_number", null: false
+    t.string "item_code", null: false
+    t.bigint "item_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["barcode_number"], name: "index_barcodes_on_barcode_number", unique: true
+    t.index ["item_id"], name: "index_barcodes_on_item_id"
+  end
 
   create_table "containers", force: :cascade do |t|
     t.string "container_code", null: false
@@ -45,8 +55,8 @@ ActiveRecord::Schema.define(version: 202100910140429) do
   end
 
   create_table "order_details", force: :cascade do |t|
-    t.bigint "order_id"
-    t.bigint "item_id"
+    t.bigint "order_id", null: false
+    t.bigint "item_id", null: false
     t.integer "quantity", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -64,6 +74,7 @@ ActiveRecord::Schema.define(version: 202100910140429) do
     t.index ["slip_number"], name: "index_orders_on_slip_number", unique: true
   end
 
+  add_foreign_key "barcodes", "items"
   add_foreign_key "materials", "containers"
   add_foreign_key "materials", "items"
   add_foreign_key "order_details", "items"
