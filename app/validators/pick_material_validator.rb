@@ -11,6 +11,18 @@ class PickMaterialValidator < ActiveModel::Validator
       return record.errors[:order] << "This order already completed picking"
     end
 
+    if order.order_status != "allocated"
+      return record.errors[:order] << "This order do not completed allocating"
+    end
+
+    if Container.find_by(container_code: record.stock_container_code).blank?
+      return record.errors[:container] << "Stock Container not found"
+    end
+
+    if Container.find_by(container_code: record.pick_container_code).blank?
+      return record.errors[:container] << "Pick Container not found"
+    end
+
     materials = []
     order.order_details.each { |od|
       materials += od.ship_order_detail_materials

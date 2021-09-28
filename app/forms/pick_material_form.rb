@@ -4,18 +4,20 @@ class PickMaterialForm
 
   attribute :slip_number, String
   attribute :barcode_number, String
-  attribute :container_code, String
+  attribute :stock_container_code, String
+  attribute :pick_container_code, String
   validates :slip_number, presence: true
   validates :barcode_number, presence: true
-  validates :container_code, presence: true
+  validates :stock_container_code, presence: true
+  validates :pick_container_code, presence: true
   validates_with BarcodeNumberValidator
-  validates_with ContainerValidator
   validates_with PickMaterialValidator
 
   def pick
     # マスタ情報取得
     barcode = Barcode.find_by(barcode_number: self.barcode_number)
-    container = Container.find_by(container_code: self.container_code)
+    stock_container = Container.find_by(container_code: self.stock_container_code)
+    pick_container = Container.find_by(container_code: self.pick_container_code)
 
     # order, order_details, materials取得
     order = Order.includes(order_details: :ship_order_detail_materials).find_by(slip_number: self.slip_number)
@@ -26,14 +28,16 @@ class PickMaterialForm
     }
 
     # バーコードからマテリアルを抽出
-    materials.select! { |m| m[:item_id] == barcode[:item_id] && m[:material_status] == "allocated" }
-
-    puts "pinopai #{materials}"
+    materials.select! { |m|
+      m[:item_id] == barcode[:item_id] &&
+      m[:material_status] == "allocated" &&
+      m[:container_id] == stock_container[:id]
+    }
 
     # マテリアルをコンテナからピック
-    result_flag = materials.first.update(material_status: "picked", container_id: container[:id])
+    result_flag = materials.first.update(material_status: "picked", container_id: pick_container[:id])
 
-    # orderのマテリアルが全て格納されていたらorderのステータスをpickedに変更
+    # orderのマテリアルが全てピックされていたらorderのステータスをpickedに変更
     update_order_status(order, materials) if result_flag == true
 
     result_flag

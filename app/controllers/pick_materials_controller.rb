@@ -21,6 +21,6 @@ class PickMaterialsController < ApplicationController
 
   private
   def pick_material_params
-    params.require(:pick_material).permit(:slip_number, :barcode_number, :container_code)
+    params.require(:pick_material).permit(:slip_number, :barcode_number, :stock_container_code, :pick_container_code)
   end
 end

@@ -8,5 +8,6 @@ Rails.application.routes.draw do
   resources :barcodes
   resources :stock_materials
   resources :pick_materials
+  resources :ship_materials
   resources :containers
 end
