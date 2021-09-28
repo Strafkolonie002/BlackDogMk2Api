@@ -6,5 +6,5 @@ class Material < ApplicationRecord
 
   validates :receive_order_detail_id, presence: true
   validates :item_id, presence: true
-  validates :material_status, presence: true, length: { maximum: 20 }, inclusion: { in: ["created", "receive inspected", "stocked", "allocated", "ship inspected", "picked", "shipped", "disposed"] }
+  validates :material_status, presence: true, length: { maximum: 20 }, inclusion: { in: ["created", "receive inspected", "stocked", "allocated", "ship inspected", "picked", "shipped", "disposed", "cancelled"] }
 end

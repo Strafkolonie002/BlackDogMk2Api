@@ -11,4 +11,5 @@ Rails.application.routes.draw do
   resources :ship_materials
   resources :containers
   resources :search_stocks
+  resources :move_materials
 end
