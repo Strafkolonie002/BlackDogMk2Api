@@ -36,6 +36,6 @@ class MaterialsController < ApplicationController
   end
 
   def material_params
-    params.require(:material).permit(:order_detail_id, :item_id, :material_status, :container_id)
+    params.require(:material).permit(:receive_order_detail_id, :ship_order_detail_id, :item_id, :material_status, :container_id)
   end
 end

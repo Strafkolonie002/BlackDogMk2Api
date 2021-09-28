@@ -44,7 +44,8 @@ ActiveRecord::Schema.define(version: 2021_09_22_315344) do
   end
 
   create_table "materials", force: :cascade do |t|
-    t.string "order_detail_id", null: false
+    t.bigint "receive_order_detail_id"
+    t.bigint "ship_order_detail_id"
     t.bigint "item_id"
     t.string "material_status", null: false
     t.bigint "container_id"
@@ -52,6 +53,8 @@ ActiveRecord::Schema.define(version: 2021_09_22_315344) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["container_id"], name: "index_materials_on_container_id"
     t.index ["item_id"], name: "index_materials_on_item_id"
+    t.index ["receive_order_detail_id"], name: "index_materials_on_receive_order_detail_id"
+    t.index ["ship_order_detail_id"], name: "index_materials_on_ship_order_detail_id"
   end
 
   create_table "order_details", force: :cascade do |t|
@@ -77,6 +80,8 @@ ActiveRecord::Schema.define(version: 2021_09_22_315344) do
   add_foreign_key "barcodes", "items"
   add_foreign_key "materials", "containers"
   add_foreign_key "materials", "items"
+  add_foreign_key "materials", "order_details", column: "receive_order_detail_id"
+  add_foreign_key "materials", "order_details", column: "ship_order_detail_id"
   add_foreign_key "order_details", "items"
   add_foreign_key "order_details", "orders"
 end

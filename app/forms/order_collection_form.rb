@@ -26,12 +26,14 @@ class OrderCollectionForm
             item_id: item[:id],
             quantity: od[:quantity]
           )
-    
+
           (od[:quantity] * item[:creation_unit]).times do
-            material = order_detail.materials.create(
+            material = Material.new(
+              receive_order_detail_id: order_detail[:id],
               item_id: item[:id],
               material_status: "created"
             )
+            material.save!
           end
         end
 
@@ -51,7 +53,7 @@ class OrderCollectionForm
         order = Order.create(
           slip_number: o[:slip_number],
           order_type: "ship",
-          order_status: "created",
+          order_status: "allocated",
           order_info: o[:order_info]
         )
 
@@ -62,11 +64,11 @@ class OrderCollectionForm
             quantity: od[:quantity]
           )
 
-          if od[:quantity] > Material.where(item_code: od[:item_code], material_status: "stocked").count
+          if od[:quantity] > Material.where(item_id: item[:id], material_status: "stocked").count
             Order.find(order.id).update(order_status: "shortage")
           else
-            materials = Material.where(item_code: od[:item_code], material_status: "stocked").limit(od[:quantity])
-            materials.update(material_status: "allocated")
+            materials = Material.where(item_id: item[:id], material_status: "stocked").limit(od[:quantity])
+            materials.update(material_status: "allocated", ship_order_detail_id: order_detail[:id])
           end
 
         end

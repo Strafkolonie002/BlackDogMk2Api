@@ -6,10 +6,10 @@ class StockMaterialsController < ApplicationController
 
   def create
     stock_material = StockMaterialForm.new(stock_material_params)
-    error_list = stock_material.validate
-    
-    unless stock_material.validate.blank?
-      render json: { message: 'failure', errors: error_list }
+    errors = stock_material.validate
+
+    if errors.any?
+      render json: { message: 'failure', errors: errors }
     else
       if stock_material.stock
         render json: { message: 'success', stock_material: stock_material }

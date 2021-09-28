@@ -7,30 +7,33 @@ class StockMaterialForm
   attribute :container_code, String
   validates :barcode_number, presence: true
   validates :container_code, presence: true
-#  validates_with ExistsSlipNumberValidator
   validates_with BarcodeNumberValidator
-  validates_with StockMaterialValidator
   validates_with ContainerValidator
+  validates_with StockMaterialValidator
 
   def stock
-    order = Order.find_by(slip_number: self.slip_number)
+    # マスタ情報取得
     barcode = Barcode.find_by(barcode_number: self.barcode_number)
     container = Container.find_by(container_code: self.container_code)
-    materials = find_materials(order)
-    to_stock_materials = materials.select { |m| m[:item_id] = barcode[:item_id] }
-    flag = to_stock_materials[0].update(material_status: "stocked", container_id: container[:id])
-    update_order_status(order, materials)
-    return flag
-  end
 
-  def find_materials(order)
-    order_details = OrderDetail.where(order_id: order[:id])
-    material_list = []
-    order_details.each do |od|
-      materials = Material.where(order_detail_id: od[:id])
-      material_list = material_list + materials
-    end
-    material_list
+    # order, order_details, materials取得
+    order = Order.includes(order_details: :receive_order_detail_materials).find_by(slip_number: self.slip_number)
+
+    materials = []
+    order.order_details.each { |od|
+      materials += od.receive_order_detail_materials
+    }
+
+    # バーコードからマテリアルを抽出
+    materials.select! { |m| m[:item_id] == barcode[:item_id] && m[:material_status] == "created" }
+
+    # マテリアルをコンテナに格納
+    result_flag = materials.first.update(material_status: "stocked", container_id: container[:id])
+
+    # orderのマテリアルが全て格納されていたらorderのステータスをstockedに変更
+    update_order_status(order, materials) if result_flag == true
+
+    result_flag
   end
 
   def validate
@@ -39,16 +42,16 @@ class StockMaterialForm
   end
 
   def update_order_status(order, materials)
-    material_status_list= []
+    material_statuses= []
 
-    materials.each do |m|
-      material_status_list.push(m[:material_status])
-    end      
+    materials.each { |m|
+      material_statuses.push(m[:material_status])
+    }     
     
     order_stocked_flag = true
-    material_status_list.each do |ms|
+    material_statuses.each { |ms|
       order_stocked_flag = false unless ms == "stocked"
-    end
+    }
     
     order.update(order_status: "stocked") if order_stocked_flag == true
   end

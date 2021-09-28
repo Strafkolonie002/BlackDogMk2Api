@@ -7,5 +7,6 @@ Rails.application.routes.draw do
   resources :materials
   resources :barcodes
   resources :stock_materials
+  resources :pick_materials
   resources :containers
 end
