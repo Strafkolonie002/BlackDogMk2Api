@@ -1,7 +1,7 @@
 class StockMaterialsController < ApplicationController
   def index
     materials = Material.where(material_status: "stocked").order(created_at: :desc)
-    render json: { message: "success", materials: materials }
+    render json: { message: "success", materials: materials }, status: :ok
   end
 
   def create
@@ -9,12 +9,12 @@ class StockMaterialsController < ApplicationController
     errors = stock_material.validate
 
     if errors.any?
-      render json: { message: 'failure', errors: errors }
+      render json: { message: 'failure', errors: errors }, status: :bad_request
     else
       if stock_material.stock
-        render json: { message: 'success', stock_material: stock_material }
+        render json: { message: 'success', stock_material: stock_material }, status: :ok
       else
-        render json: { message: 'failure', errors: stock_material.errors }
+        render json: { message: 'failure', errors: stock_material.errors }, status: :bad_request
       end
     end
   end

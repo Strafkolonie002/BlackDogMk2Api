@@ -1,33 +1,33 @@
 class ContainersController < ApplicationController
   def index
     containers = Container.order(created_at: :desc)
-    render json: { message: "success", data: containers }
+    render json: { message: "success", data: containers }, status: :ok
   end
 
   def create
     container = Container.new(container_params)
     if container.save
-      render json: { message: 'success', data: container }
+      render json: { message: 'success', data: container }, status: :ok
     else
-      render json: { message: 'failure', errors: container.errors }
+      render json: { message: 'failure', errors: container.errors }, status: :bad_request
     end
   end
 
   def show
-    render json: { message: 'success', data: [set_container] }
+    render json: { message: 'success', data: [set_container] }, status: :ok
   end
 
   def update
     if set_container.update(container_params)
-      render json: { message: 'success', data: [@container] }
+      render json: { message: 'success', data: [@container] }, status: :ok
     else
-      render json: { message: 'failure', errors: [@container.errors] }
+      render json: { message: 'failure', errors: [@container.errors] }, status: :bad_request
     end
   end
 
   def destroy
     set_container.destroy
-    render json: { message: 'success', data: [@container] }
+    render json: { message: 'success', data: [@container] }, status: :ok
   end
 
   private

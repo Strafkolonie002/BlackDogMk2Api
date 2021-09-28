@@ -1,7 +1,7 @@
 class ShipMaterialsController < ApplicationController
   def index
     materials = Material.where(material_status: "shipped").order(created_at: :desc)
-    render json: { message: "success", materials: materials }
+    render json: { message: "success", materials: materials }, status: :ok
   end
 
   def create
@@ -9,13 +9,13 @@ class ShipMaterialsController < ApplicationController
     errors = ship_material.validate
 
     if errors.any?
-      render json: { message: 'failure', errors: errors }
+      render json: { message: 'failure', errors: errors }, status: :bad_request
     else
       updated_materials = ship_material.ship
       unless updated_materials.blank?
-        render json: { message: 'success', ship_material: ship_material }
+        render json: { message: 'success', ship_material: ship_material }, status: :ok
       else
-        render json: { message: 'failure', errors: ship_material.errors }
+        render json: { message: 'failure', errors: ship_material.errors }, status: :bad_request
       end
     end
   end

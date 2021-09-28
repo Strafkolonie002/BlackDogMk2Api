@@ -6,7 +6,7 @@ class OrderDetailsController < ApplicationController
   def create
     order_detail = OrderDetail.new(order_detail_params)
     if order_detail.save
-      render json: { message: 'success', order_detail: order_detail }, status: :bad_request
+      render json: { message: 'success', order_detail: order_detail }, status: :ok
     else
       render json: { message: 'failure', errors: order_detail.errors }, status: :bad_request
     end
