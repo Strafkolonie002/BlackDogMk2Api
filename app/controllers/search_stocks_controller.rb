@@ -19,7 +19,7 @@ class SearchStocksController < ApplicationController
       
       render json: { message: "success", materials: stock_info.group_by{ |m| m[:container_code]}}, status: :ok
     end
-    end
+  end
 
   private
   def stock_material_params

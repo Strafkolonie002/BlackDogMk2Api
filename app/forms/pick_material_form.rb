@@ -28,14 +28,14 @@ class PickMaterialForm
     }
 
     # バーコードからマテリアルを抽出
-    materials.select! { |m|
+    selected_materials = materials.select { |m|
       m[:item_id] == barcode[:item_id] &&
       m[:material_status] == "allocated" &&
       m[:container_id] == stock_container[:id]
     }
 
     # マテリアルをコンテナからピック
-    result_flag = materials.first.update(material_status: "picked", container_id: pick_container[:id])
+    result_flag = selected_materials.first.update(material_status: "picked", container_id: pick_container[:id])
 
     # orderのマテリアルが全てピックされていたらorderのステータスをpickedに変更
     update_order_status(order, materials) if result_flag == true

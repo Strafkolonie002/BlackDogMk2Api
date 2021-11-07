@@ -12,4 +12,10 @@ Rails.application.routes.draw do
   resources :containers
   resources :search_stocks
   resources :move_materials
+  resources :cancel_ship_orders
+  resources :created_receive_orders
+  resources :allocated_ship_orders
+  resources :picked_ship_orders
+  resources :reallocate_ship_orders
+  resources :multi_create_items
 end

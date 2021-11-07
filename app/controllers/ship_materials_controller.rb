@@ -22,6 +22,6 @@ class ShipMaterialsController < ApplicationController
 
   private
   def ship_material_params
-    params.require(:ship_material).permit(:slip_number, :container_code)
+    params.require(:ship_material).permit(:slip_number)
   end
 end

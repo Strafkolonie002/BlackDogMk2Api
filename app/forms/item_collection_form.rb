@@ -8,7 +8,6 @@ class ItemCollectionForm
 
   def save!
     return false if invalid?
-    puts "pinoman #{items}"
     Item.transaction do
       self.items.map do |item|
         item.save!

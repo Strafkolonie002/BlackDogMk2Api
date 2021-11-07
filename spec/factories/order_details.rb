@@ -1,8 +1,7 @@
 FactoryBot.define do
   factory :order_detail do
-    order_id { "" }
-    item_code { "MyString" }
+    association :order, factory: :order
+    association :item, factory: :item
     quantity { 1 }
-    order_detail_info { "" }
   end
 end

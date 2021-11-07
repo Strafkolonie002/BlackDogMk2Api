@@ -1,6 +1,17 @@
 class ItemsController < ApplicationController
   def index
-    render json: { message: "success", items: Item.order(created_at: :desc) }, status: :ok
+    items = []
+    Item.includes(:barcodes).order(created_at: :desc).each { |i|
+      items.push(
+        {
+          id: i.id,
+          item_code: i.item_code,
+          item_name: i.item_name,
+          barcodes: i.barcodes
+        }
+      )
+    }
+    render json: { message: "success", items:items }, status: :ok
   end
 
   def create

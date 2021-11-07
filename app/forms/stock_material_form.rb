@@ -7,7 +7,6 @@ class StockMaterialForm
   attribute :container_code, String
   validates :barcode_number, presence: true
   validates :container_code, presence: true
-  validates_with BarcodeNumberValidator
   validates_with ContainerValidator
   validates_with StockMaterialValidator
 
@@ -25,10 +24,10 @@ class StockMaterialForm
     }
 
     # バーコードからマテリアルを抽出
-    materials.select! { |m| m[:item_id] == barcode[:item_id] && m[:material_status] == "created" }
+    selected_materials = materials.select { |m| m[:item_id] == barcode[:item_id] && m[:material_status] == "created" }
 
     # マテリアルをコンテナに格納
-    result_flag = materials.first.update(material_status: "stocked", container_id: container[:id])
+    result_flag = selected_materials.first.update(material_status: "stocked", container_id: container[:id])
 
     # orderのマテリアルが全て格納されていたらorderのステータスをstockedに変更
     update_order_status(order, materials) if result_flag == true

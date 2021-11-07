@@ -1,7 +1,6 @@
 class ShipMaterialValidator < ActiveModel::Validator
   def validate(record)
     order = Order.includes(order_details: :ship_order_detail_materials).find_by(slip_number: record.slip_number)
-    container =  Container.find_by(container_code: record.container_code)
 
     if order.blank?
       return record.errors[:order] << "Order not found"
@@ -20,7 +19,7 @@ class ShipMaterialValidator < ActiveModel::Validator
       materials += od.ship_order_detail_materials
     }
 
-    materials.select { |m| m[:container_id] == container[:container_id] && m[:material_status] == "picked"}
+    materials.select { |m| m[:material_status] == "picked"}
 
     if materials.blank?
       record.errors[:material] << "Material not found"

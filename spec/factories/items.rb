@@ -1,7 +1,8 @@
 FactoryBot.define do
   factory :item do
-    item_code { "MyString" }
-    item_name { "MyString" }
-    item_properties { "" }
+    sequence(:item_code) { |n| "TEST_CODE#{n}"}
+    sequence(:item_name) { |n| "TEST_NAME#{n}"}
+    inspection { true }
+    creation_unit { 1 }
   end
 end

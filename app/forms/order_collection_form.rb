@@ -70,7 +70,6 @@ class OrderCollectionForm
             materials = Material.where(item_id: item[:id], material_status: "stocked").limit(od[:quantity])
             materials.update(material_status: "allocated", ship_order_detail_id: order_detail[:id])
           end
-
         end
 
         order_list.push(order)
@@ -79,7 +78,7 @@ class OrderCollectionForm
   end
 
   # orders, order, order_detail の順にバリデーションでエラーにする
-  # どのorderのどのorder_detaolでエラーが出たのかを明確にするため、通常のバリデーションと異なるレスポンスにしている
+  # どのorderのどのorder_detailでエラーが出たのかを明確にするため、通常のバリデーションと異なるレスポンスにしている
   def validate_params
     error_list = []
     slip_number_list = []
