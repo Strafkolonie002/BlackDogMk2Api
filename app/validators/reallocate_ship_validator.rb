@@ -10,7 +10,7 @@ class ReallocateShipValidator < ActiveModel::Validator
     
     order.order_details.each { |od|
       materials = Material.where(item_id: od.item_id, material_status: "stocked")
-      reallocate_flag = true  if od.quantity > materials.count
+      reallocate_flag = true  if materials.count > od.quantity
     }
 
     unless reallocate_flag
